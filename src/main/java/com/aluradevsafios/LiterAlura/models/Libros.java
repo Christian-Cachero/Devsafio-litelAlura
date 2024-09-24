@@ -10,7 +10,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Setter
 @Getter
-@ToString
+//@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -24,7 +24,7 @@ public class Libros {
     @JsonAlias("title")
     private String titulo;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany//(cascade = CascadeType.PERSIST)
     @JoinTable(name = "book_authors", joinColumns = @JoinColumn(name = "libros_id"),
             inverseJoinColumns = @JoinColumn(name = "personas_id")
     ) // Relación con la entidad Persona
@@ -37,6 +37,14 @@ public class Libros {
 
     @JsonAlias("download_count")
     private Integer numeroDescargas;
+
+    @Override
+    public String toString() {
+        return "titulo='" + titulo + '\'' +
+                ", autor=" + autor +
+                ", idioma=" + idioma +
+                ", numeroDescargas=" + numeroDescargas;
+    }
 
     /*public Libros(DatosLibros datosLibros) {
         this.titulo = datosLibros.titulo();

@@ -11,7 +11,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Setter
 @Getter
-@ToString
+//@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -31,6 +31,18 @@ public class Persona {
     @JsonAlias("name")
     private String nombre;
 
-    @ManyToMany(mappedBy = "autor")
+    @ManyToMany(mappedBy = "autor", fetch = FetchType.EAGER)
     private List<Libros> libros;
+
+    @Override
+    public String toString() {
+        return " '" + nombre + '\'' ;
+    }
+
+   /* @Override
+    public String toString() {
+        return " nombre= " + nombre +
+                ", fechaNacimiento=" + fechaNacimiento +
+                ", fechaMuerte=" + fechaMuerte;
+    }*/
 }
