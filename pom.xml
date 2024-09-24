@@ -55,10 +55,10 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-        </dependency>
+        </dependency>-->
     </dependencies>
 
     <build>
