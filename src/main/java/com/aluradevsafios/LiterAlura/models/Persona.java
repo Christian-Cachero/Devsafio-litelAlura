@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import jakarta.persistence.*;
+import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.List;
 
@@ -31,12 +32,12 @@ public class Persona {
     @JsonAlias("name")
     private String nombre;
 
-    @ManyToMany(mappedBy = "autor", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "autor"/*, cascade = CascadeType.ALL*//*, fetch = FetchType.EAGER*/)
     private List<Libros> libros;
 
     @Override
     public String toString() {
-        return " '" + nombre + '\'' ;
+        return "'" + nombre + '\'';
     }
 
    /* @Override

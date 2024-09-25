@@ -24,14 +24,14 @@ public class Libros {
     @JsonAlias("title")
     private String titulo;
 
-    @ManyToMany//(cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "book_authors", joinColumns = @JoinColumn(name = "libros_id"),
             inverseJoinColumns = @JoinColumn(name = "personas_id")
     ) // Relación con la entidad Persona
     @JsonAlias("authors")
     private List<Persona> autor;
 
-    @ElementCollection // Para almacenar una lista de elementos simples
+    @ElementCollection(fetch = FetchType.EAGER) // Para almacenar una lista de elementos simples
     @JsonAlias("languages")
     private List<String> idioma;
 

@@ -9,29 +9,35 @@ import com.aluradevsafios.LiterAlura.serviceImpl.ConsumoAPImpl;
 import com.aluradevsafios.LiterAlura.serviceImpl.ConvierteDatosImpl;
 import com.aluradevsafios.LiterAlura.utilities.EncodearBusquedas;
 
-import lombok.AllArgsConstructor;
-import org.hibernate.Hibernate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-@AllArgsConstructor
+//@AllArgsConstructor
 @Service
 public class Principal {
 
-    private final EncodearBusquedas encoder = new EncodearBusquedas();
+    private EncodearBusquedas encoder = new EncodearBusquedas();
 
-    private final Scanner s = new Scanner(System.in);
+    private Scanner s = new Scanner(System.in);
 
-    private final ConsumoAPImpl consumoApi = new ConsumoAPImpl();
+    private ConsumoAPImpl consumoApi = new ConsumoAPImpl();
 
-    private final ConvierteDatosImpl conversor = new ConvierteDatosImpl();
+    private ConvierteDatosImpl conversor = new ConvierteDatosImpl();
 
-    private final String URL_BASE = "https://gutendex.com/books/?search=";
+    private String URL_BASE = "https://gutendex.com/books/?search=";
 
+    private List<Libros> libros;
     //private final String TEXTO_BUSCAR = "?search=";
+
+
+    public Principal(LibrosRepository libroRepository, PersonaRepository personaRepository) {
+        this.libroRepository = libroRepository;
+        this.personaRepository = personaRepository;
+    }
 
     @Autowired
     private LibrosRepository libroRepository;
@@ -45,6 +51,7 @@ public class Principal {
         while (opcion != 0) {
             var menu =
                     """
+                     
                      1) Buscar libros
                      2) Ver todos los libros
                      3) Buscar libros por idioma
@@ -57,6 +64,12 @@ public class Principal {
             switch (opcion) {
                 case 1:
                     buscarLibro();
+                    break;
+                case 2:
+                    mostrarLibros();
+                    break;
+                case 3:
+                    mostrarLibrosPorIdioma();
                     break;
                 case 0:
                     System.out.println("Cerrando la aplicación...");
@@ -73,15 +86,13 @@ public class Principal {
             var tituloLibro = s.nextLine();
             var json = consumoApi.obtenerDatos(URL_BASE + encoder.encodearBusquedas(tituloLibro));
             //System.out.println(json);
-            DatosLibros datos = conversor.obtenerDatos(json, DatosLibros.class);
-            //System.out.println("datos después de la conversion " + datos); //necesario recoger los datos de los contenedores y asignarlos a un nuevo objeto libro.
-            return datos;
+            //System.out.println("datos después de la conversion " + datos);
+            return conversor.obtenerDatos(json, DatosLibros.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    //@Transactional
     public void buscarLibro() {
         Optional<DatosLibros> optionalDatos = Optional.ofNullable(getDatosLibro());
         if (optionalDatos.isPresent()) {
@@ -97,11 +108,10 @@ public class Principal {
 
                 if (!libro.getAutor().isEmpty()) {
                     Persona autor = libro.getAutor().get(0);
+                    System.out.println(libro);
                     Optional<Persona> personaExiste = personaRepository.findByNombre(autor.getNombre());
 
-                    System.out.println(libro);
                     if (personaExiste.isPresent()) {
-                        Hibernate.initialize(personaExiste.get().getLibros());
                         libro.setAutor(Collections.singletonList(personaExiste.get()));
                     } else {
                         Persona nuevoAutor = personaRepository.save(autor);
@@ -122,4 +132,20 @@ public class Principal {
         }
     }
 
+    /*@Transactional*/
+    public void mostrarLibros(){
+        libros = libroRepository.findAll();
+        libros.forEach(System.out::println);
+    }
+
+    public void mostrarLibrosPorIdioma(){
+        System.out.println("Ingresa el prefijo del idioma del libro que querés buscar: ");
+        var libroIdioma = s.nextLine();
+        libros = libroRepository.findByIdioma(libroIdioma);
+        if (!libros.isEmpty()){
+            libros.forEach(System.out::println);
+        } else {
+            System.out.println("Ningún libro tiene tal prefijo.");
+        }
+    }
 }

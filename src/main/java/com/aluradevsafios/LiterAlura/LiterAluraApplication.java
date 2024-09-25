@@ -11,6 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class LiterAluraApplication implements CommandLineRunner {
 
+
+	//recordar siempre inicializar los repositorios acá:
 	@Autowired
 	private LibrosRepository libroRepository;
 
@@ -23,7 +25,7 @@ public class LiterAluraApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String[] args) {
-		Principal principal = new Principal(libroRepository, personaRepository);
+		Principal principal = new Principal(libroRepository,personaRepository);
 
 		principal.mostrarMenu();
 	}
