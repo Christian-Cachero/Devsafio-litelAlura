@@ -35,15 +35,15 @@ public class Persona {
     @ManyToMany(mappedBy = "autor"/*, cascade = CascadeType.ALL*//*, fetch = FetchType.EAGER*/)
     private List<Libros> libros;
 
-    @Override
+    /*@Override
     public String toString() {
         return "'" + nombre + '\'';
-    }
+    }*/
 
-   /* @Override
+    @Override
     public String toString() {
         return " nombre= " + nombre +
                 ", fechaNacimiento=" + fechaNacimiento +
                 ", fechaMuerte=" + fechaMuerte;
-    }*/
+    }
 }

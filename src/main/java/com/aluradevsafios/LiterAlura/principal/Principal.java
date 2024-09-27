@@ -12,7 +12,6 @@ import com.aluradevsafios.LiterAlura.utilities.EncodearBusquedas;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -28,22 +27,22 @@ public class Principal {
 
     private ConvierteDatosImpl conversor = new ConvierteDatosImpl();
 
-    private String URL_BASE = "https://gutendex.com/books/?search=";
+    private final String URL_BASE = "https://gutendex.com/books/?search=";
 
     private List<Libros> libros;
     //private final String TEXTO_BUSCAR = "?search=";
-
-
-    public Principal(LibrosRepository libroRepository, PersonaRepository personaRepository) {
-        this.libroRepository = libroRepository;
-        this.personaRepository = personaRepository;
-    }
+    private List<Persona> autores;
 
     @Autowired
     private LibrosRepository libroRepository;
 
     @Autowired
     private PersonaRepository personaRepository;
+
+    public Principal(LibrosRepository libroRepository, PersonaRepository personaRepository) {
+        this.libroRepository = libroRepository;
+        this.personaRepository = personaRepository;
+    }
 
     public void mostrarMenu() {
 
@@ -52,9 +51,12 @@ public class Principal {
             var menu =
                     """
                      
-                     1) Buscar libros
-                     2) Ver todos los libros
-                     3) Buscar libros por idioma
+                     1) Buscar libros.
+                     2) Ver todos los libros.
+                     3) Buscar libros por idioma.
+                     4) Listar autores de los libros buscados.
+                     5) Listar autores vivos (rango de años).
+                     6) Listar cantidad de libros en español o inglés.
                      0) Salir
                      """;
             System.out.println(menu);
@@ -70,6 +72,15 @@ public class Principal {
                     break;
                 case 3:
                     mostrarLibrosPorIdioma();
+                    break;
+                case 4:
+                    mostrarAutores();
+                    break;
+                case 5:
+                    mostrarAutoresVivos();
+                    break;
+                case 6:
+                    cantidadLibrosPorIdioma();
                     break;
                 case 0:
                     System.out.println("Cerrando la aplicación...");
@@ -146,6 +157,61 @@ public class Principal {
             libros.forEach(System.out::println);
         } else {
             System.out.println("Ningún libro tiene tal prefijo.");
+        }
+    }
+
+    public void mostrarAutores(){
+        autores = personaRepository.findAll();
+        autores.forEach(System.out::println);
+    }
+
+    public void mostrarAutoresVivos() {
+
+        System.out.println("por favor indica año inicial del rango: ");
+        var periodoNacido = s.nextInt();
+
+        System.out.println("por favor indica año final del rango: ");
+        var periodoMuerto = s.nextInt();
+
+        var autoresVivosOptional = personaRepository.
+                findByFechaMuerteGreaterThanEqualAndFechaNacimientoLessThanEqual(periodoNacido, periodoMuerto);
+
+        if (autoresVivosOptional.isPresent()) {
+            var autoresVivos = autoresVivosOptional.get();
+
+            if (!autoresVivos.isEmpty()) {
+                autoresVivos.forEach(System.out::println);
+            } else {
+                System.out.println("No hay autores vivos en la fecha especificada.");
+            }
+        } else {
+            System.out.println("No hay ningún autor nacido ese periodo");
+        }
+    }
+
+    public void cantidadLibrosPorIdioma() {
+        libros = libroRepository.findAll();
+
+        System.out.println("especifica el prefijo del idioma a contar la" +
+                " cantidad eligiendo una opción: 1) 'es' 2) 'en' ");
+        var opcionEscojida = s.nextInt();
+
+        long cantidadLibrosIdiomas = 0;
+        switch (opcionEscojida) {
+            case 1:
+                cantidadLibrosIdiomas = libros.stream()
+                        .filter(lI -> lI.getIdioma().stream()
+                                .anyMatch(idioma -> idioma.trim().equalsIgnoreCase("es"))
+                        ).count();
+                System.out.println("la cantidad de libros actuales en idioma español son: " + cantidadLibrosIdiomas);
+                break;
+            case 2:
+                cantidadLibrosIdiomas = libros.stream()
+                        .filter(lI -> lI.getIdioma().stream()
+                                .anyMatch(idioma -> idioma.trim().equalsIgnoreCase("en"))
+                        ).count();
+                System.out.println("la cantidad de libros actuales en idioma ingles son: " + cantidadLibrosIdiomas);
+                break;
         }
     }
 }
