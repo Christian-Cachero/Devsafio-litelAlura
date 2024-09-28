@@ -5,14 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import jakarta.persistence.*;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Setter
 @Getter
-//@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -32,7 +30,7 @@ public class Persona {
     @JsonAlias("name")
     private String nombre;
 
-    @ManyToMany(mappedBy = "autor"/*, cascade = CascadeType.ALL*//*, fetch = FetchType.EAGER*/)
+    @ManyToMany(mappedBy = "autor")
     private List<Libros> libros;
 
     /*@Override
