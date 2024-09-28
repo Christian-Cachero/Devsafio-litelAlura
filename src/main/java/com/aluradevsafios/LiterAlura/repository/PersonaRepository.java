@@ -12,6 +12,6 @@ public interface PersonaRepository extends JpaRepository<Persona, Long> {
 
    Optional<Persona> findByNombre(String nombre);
 
-   Optional<List<Persona>> findByFechaMuerteGreaterThanEqualAndFechaNacimientoLessThanEqual(Integer periodoNacido, Integer periodoMuerte);
-   //Optional<Persona> findByFechaMuerte();
+   Optional<List<Persona>>
+   findByFechaMuerteGreaterThanEqualAndFechaNacimientoLessThanEqual(Integer periodoNacido, Integer periodoMuerte);
 }

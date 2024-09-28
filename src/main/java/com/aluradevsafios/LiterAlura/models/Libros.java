@@ -10,7 +10,6 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Setter
 @Getter
-//@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
