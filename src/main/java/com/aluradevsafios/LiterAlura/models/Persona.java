@@ -40,8 +40,8 @@ public class Persona {
 
     @Override
     public String toString() {
-        return " nombre= " + nombre +
-                ", fechaNacimiento=" + fechaNacimiento +
-                ", fechaMuerte=" + fechaMuerte;
+        return " nombre: " + nombre +
+                ", fechaNacimiento: " + fechaNacimiento +
+                ", fechaMuerte: " + fechaMuerte;
     }
 }
