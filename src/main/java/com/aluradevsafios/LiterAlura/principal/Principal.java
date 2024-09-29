@@ -12,7 +12,10 @@ import com.aluradevsafios.LiterAlura.utilities.EncodearBusquedas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.Normalizer;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class Principal {
@@ -41,7 +44,7 @@ public class Principal {
         this.libroRepository = libroRepository;
         this.personaRepository = personaRepository;
     }
-
+    //numero de libros almacenados hasta ahora: 20.
     public void mostrarMenu() {
 
         var opcion = -1;
@@ -54,6 +57,9 @@ public class Principal {
                          4) Listar autores de los libros buscados.
                          5) Listar autores vivos (rango de años).
                          6) Listar cantidad de libros en español o inglés.
+                         7) Mostrar estadísticas de descargas.
+                         8) Listar top 10 libros mas descargados.
+                         9) Buscar Autor por nombre.
                          0) Salir
                          """;
             System.out.println(menu);
@@ -67,6 +73,9 @@ public class Principal {
                 case 4 -> mostrarAutores();
                 case 5 -> mostrarAutoresVivos();
                 case 6 -> cantidadLibrosPorIdioma();
+                case 7 -> estadisticasGeneralesDescargas();
+                case 8 -> top10LibrosMasDescargados();
+                case 9 -> buscarAutorPorNombre();
                 case 0 -> System.out.println("Cerrando la aplicación...");
                 default -> System.out.println("Opción invalidad vuelva a intentar \n");
             }
@@ -89,10 +98,10 @@ public class Principal {
         if (datosLibros != null) {
             List<Libros> datos = datosLibros.resultado();
             if (!datos.isEmpty()) {
-                Libros libro = datos.get(0); // Toma el primer libro
+                Libros libro = datos.get(0); // Agarra el primer libro
 
                 if (!libro.getAutor().isEmpty()) {
-                    Persona autor = libro.getAutor().get(0); // Toma el primer autor
+                    Persona autor = libro.getAutor().get(0); // Agarra el primer autor
                     System.out.println(libro);
 
                     Optional<Persona> personaExiste = personaRepository.findByNombre(autor.getNombre());
@@ -120,7 +129,7 @@ public class Principal {
         libros = libroRepository.findAll();
         if (!libros.isEmpty()) {
             libros.forEach(System.out::println);
-            System.out.println(" ");
+            System.out.println();
         } else {
             System.out.println("No hay libros almacenados que encontrar");
         }
@@ -142,6 +151,7 @@ public class Principal {
 
         if (!autores.isEmpty()) {
             autores.forEach(System.out::println);
+            System.out.println();
         } else {
             System.out.println("No hay autores almacenados que encontrar");
         }
@@ -192,8 +202,56 @@ public class Principal {
                             .anyMatch(idioma -> idioma.equals(idiomaBuscado))
                     ).count();
 
-            System.out.println("la cantidad de libros actuales en idioma " + (opcionEscojida == 1 ? "español" : "ingles")
-                    + " son: " + cantidadLibrosIdiomas + "\n" );
+            System.out.println("la cantidad de libros actuales en idioma " +
+                    (opcionEscojida == 1 ? "español" : "ingles") + " son: " + cantidadLibrosIdiomas + "\n" );
         }
+    }
+
+    public void estadisticasGeneralesDescargas() {
+
+        libros = libroRepository.findAll();
+
+        IntSummaryStatistics est = libros.stream()
+                .filter(l -> l.getNumeroDescargas() > 0)
+                .collect(Collectors.summarizingInt(Libros::getNumeroDescargas));
+
+        System.out.println("Media de las descargas en la biblioteca: " + Math.round(est.getAverage()));
+        System.out.println("Pico de descargas de un libro en la biblioteca: " + est.getMax());
+        System.out.println("Valle de descargas de un libro en la biblioteca: " + est.getMin());
+        System.out.println();
+    }
+
+    public void top10LibrosMasDescargados(){
+        libros = libroRepository.findTop10ByOrderByNumeroDescargasDesc();
+
+        libros.forEach(l -> System.out.println("Libro: '" + l.getTitulo() + "'" +
+                ", \nDescargas: '" + l.getNumeroDescargas() + "'\n"));
+    }
+
+    public void buscarAutorPorNombre(){
+        System.out.println("Ingresa el nombre del autor que pretendes buscar: ");
+        var nombre = s.nextLine();
+        autores = personaRepository.findAll();
+
+        Optional<Persona> autor = autores.stream()
+                .filter(a -> quitarAcentos(a.getNombre()).toLowerCase().contains(quitarAcentos(nombre).toLowerCase()))
+                .findFirst();
+
+        if (autor.isPresent()) {
+            System.out.println(autor.get());
+            System.out.println();
+        }
+        else {
+            System.out.println("No se encontró tal autor en la base de datos, asegurese de haber cargado un libro con" +
+                    " este autor.");
+        }
+    }
+
+    public String quitarAcentos(String texto) {
+        // Normaliza el texto a forma NFD, que separa los caracteres de acento
+        String normalized = Normalizer.normalize(texto, Normalizer.Form.NFD);
+        // Usa una expresión regular para eliminar los caracteres de acento
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(normalized).replaceAll("");
     }
 }

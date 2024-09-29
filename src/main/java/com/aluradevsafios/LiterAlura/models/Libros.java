@@ -39,10 +39,10 @@ public class Libros {
 
     @Override
     public String toString() {
-        return "titulo='" + titulo + '\'' +
-                ", autor=" + autor +
-                ", idioma=" + idioma +
-                ", numeroDescargas=" + numeroDescargas;
+        return "titulo: '" + titulo + '\'' +
+                ", autor: " + autor +
+                ", idioma: " + idioma +
+                ", numeroDescargas: " + numeroDescargas;
     }
 
     /*public Libros(DatosLibros datosLibros) {

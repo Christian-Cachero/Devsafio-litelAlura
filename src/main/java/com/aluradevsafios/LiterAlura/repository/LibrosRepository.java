@@ -11,4 +11,6 @@ public interface LibrosRepository extends JpaRepository<Libros, Long> {
 
     List<Libros> findByIdioma(String idioma);
 
+    List<Libros> findTop10ByOrderByNumeroDescargasDesc();
+
 }
