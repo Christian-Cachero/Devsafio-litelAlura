@@ -44,11 +44,4 @@ public class Libros {
                 ", idioma: " + idioma +
                 ", numeroDescargas: " + numeroDescargas;
     }
-
-    /*public Libros(DatosLibros datosLibros) {
-        this.titulo = datosLibros.titulo();
-        this.autor = datosLibros.autor();
-        this.idioma = datosLibros.idioma();
-        this.numeroDescargas = datosLibros.numeroDescargas();
-    }*/
 }

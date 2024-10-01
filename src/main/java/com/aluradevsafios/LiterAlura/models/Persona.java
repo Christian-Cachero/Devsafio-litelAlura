@@ -14,11 +14,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "personas") // Nombre de la tabla en la base de datos
+@Table(name = "personas")
 public class Persona {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Generación automática del ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @JsonAlias("birth_year")
@@ -32,11 +32,6 @@ public class Persona {
 
     @ManyToMany(mappedBy = "autor")
     private List<Libros> libros;
-
-    /*@Override
-    public String toString() {
-        return "'" + nombre + '\'';
-    }*/
 
     @Override
     public String toString() {
