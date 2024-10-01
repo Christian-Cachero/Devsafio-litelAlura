@@ -44,7 +44,6 @@ public class Principal {
         this.libroRepository = libroRepository;
         this.personaRepository = personaRepository;
     }
-    //numero de libros almacenados hasta ahora: 20.
     public void mostrarMenu() {
 
         var opcion = -1;
@@ -98,18 +97,18 @@ public class Principal {
         if (datosLibros != null) {
             List<Libros> datos = datosLibros.resultado();
             if (!datos.isEmpty()) {
-                Libros libro = datos.get(0); // Agarra el primer libro
+                Libros libro = datos.get(0);
 
                 if (!libro.getAutor().isEmpty()) {
-                    Persona autor = libro.getAutor().get(0); // Agarra el primer autor
+                    Persona autor = libro.getAutor().get(0);
                     System.out.println(libro);
 
                     Optional<Persona> personaExiste = personaRepository.findByNombre(autor.getNombre());
                     if (personaExiste.isPresent()) {
-                        libro.setAutor(Collections.singletonList(personaExiste.get())); // Establece el autor existente
+                        libro.setAutor(Collections.singletonList(personaExiste.get()));
                     } else {
-                        Persona nuevoAutor = personaRepository.save(autor); // Guarda el nuevo autor
-                        libro.setAutor(Collections.singletonList(nuevoAutor)); // Establece el nuevo autor
+                        Persona nuevoAutor = personaRepository.save(autor);
+                        libro.setAutor(Collections.singletonList(nuevoAutor));
                     }
 
                     libroRepository.save(libro); // Guarda el libro
@@ -242,15 +241,13 @@ public class Principal {
             System.out.println();
         }
         else {
-            System.out.println("No se encontró tal autor en la base de datos, asegurese de haber cargado un libro con" +
+            System.out.println("No se encontró tal autor en la base de datos, asegúrese de haber cargado un libro con" +
                     " este autor.");
         }
     }
 
     public String quitarAcentos(String texto) {
-        // Normaliza el texto a forma NFD, que separa los caracteres de acento
         String normalized = Normalizer.normalize(texto, Normalizer.Form.NFD);
-        // Usa una expresión regular para eliminar los caracteres de acento
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         return pattern.matcher(normalized).replaceAll("");
     }
